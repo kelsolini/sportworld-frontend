@@ -71,24 +71,24 @@ const editAthlete = async (editedAthlete: IAthlete) : Promise<IAthleteSingelResp
 }
 
 // POST OBJEKT MED BILDE
-const postAthlete = async (athlete: IAthlete, image: File) => {
+   const postAthlete = async (athlete: IAthlete, image: File) => {
     try {
         const response = await axios.post(endpoint, athlete);
+
         const formData = new FormData();
         formData.append("file", image);
-        const response2 = await axios({
-            url: endpointImageUpload,
-            method: "POST",
-            data: formData,
+
+        await axios.post(endpointImageUpload, formData, {
             headers: { "Content-Type": "multipart/form-data" }
         });
 
         return {
             success: true,
-            data: response.data && response2.data
-        }
+            data: response.data
+        };
 
-    } catch(error){
+    } catch (error) {
+        console.error("POST error:", error);
         return {
             success: false,
             data: null

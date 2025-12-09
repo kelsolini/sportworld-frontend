@@ -1,6 +1,7 @@
-import { useRef, useState, type ChangeEvent } from "react";
+import { useContext, useRef, useState, type ChangeEvent } from "react";
 import type { IAthlete } from "../../interfaces/IAthlete";
-import AthleteService from "../../services/AthleteService";
+import { AthleteContext } from "../../contexts/AthleteContext";
+import type { IAthleteContext } from "../../interfaces/IAthleteContext";
 
 const NewAthlete = () => {
 
@@ -11,6 +12,8 @@ const NewAthlete = () => {
     // purchaseStatus skal være false som default
     // const purchaseStatus = useRef<HTMLInputElement>(false);
 
+    const {saveAthlete} = useContext(AthleteContext) as IAthleteContext;
+
     const changeHandler = (e: ChangeEvent<HTMLInputElement>) => {
         const {files} = e.target;
         if(files != null){
@@ -19,7 +22,7 @@ const NewAthlete = () => {
         }
     }
 
-    const saveAthlete = () => {
+    const handleSaveAthlete = async () => {
         if(
             nameInput.current && nameInput.current?.value.trim() != "" &&
             genderInput.current && genderInput.current?.value.trim() != "" &&
@@ -33,7 +36,7 @@ const NewAthlete = () => {
                 image: image.name,
                 purchaseStatus: false
             }
-            AthleteService.postAthlete(newAthlete, image);
+            await saveAthlete(newAthlete, image);
         }
     }
 
@@ -55,7 +58,7 @@ const NewAthlete = () => {
                 <label>Image</label>
                 <input onChange={changeHandler} className="border" type="file"/>
             </div>
-            <button className="border" onClick={saveAthlete}>Save new athlete</button>
+            <button className="border" onClick={handleSaveAthlete}>Save new athlete</button>
         </section>
     );
 }

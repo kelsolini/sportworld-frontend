@@ -8,4 +8,5 @@ export interface IAthleteContext {
     idAthlete: IAthlete | null,
     fetchAthleteByName: (name: string) => void,
     nameAthletes: IAthlete[],
+    saveAthlete: (athlete: IAthlete, image: File) => Promise<IDefaultResponse>
 }

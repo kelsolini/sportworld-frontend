@@ -2,6 +2,7 @@ import { useState, createContext, type ReactNode, useEffect } from "react";
 import { type IAthlete } from "../interfaces/IAthlete";
 import type { IAthleteContext } from "../interfaces/IAthleteContext";
 import AthleteService from "../services/AthleteService";
+import type { IDefaultResponse } from "../interfaces/ResponseInterfaces";
 
 export const AthleteContext = createContext<IAthleteContext | null>(null);
 
@@ -12,6 +13,7 @@ export const AthleteProvider = ({children} : Props) => {
     const [athletes, setAthletes] = useState<IAthlete[]>([]);
     const [idAthlete, setIdAthlete] = useState<IAthlete | null>(null);
     const [nameAthletes, setNameAthletes] = useState<IAthlete[]>([]);
+
 
     const setAthletesFromService = async () => {
         const response = await AthleteService.getAllAthletes();
@@ -53,11 +55,37 @@ export const AthleteProvider = ({children} : Props) => {
 
     // TODO: Put/edit athlete
 
+    const editAthlete = async (updatedAthlete: IAthlete) : Promise<IDefaultResponse> => {
+        const response = await AthleteService.editAthlete(updatedAthlete);
+        if(response.success && response.data){
+            setAthletes(
+                prev => [updatedAthlete, ...prev]
+            );
+        }
+        return response;
+    }
+
+    // POST
+
+    const saveAthlete = async (newAthlete: IAthlete, image: File) : Promise<IDefaultResponse> => {
+        const response = await AthleteService.postAthlete(newAthlete, image);
+        if(response.success === true && response.data != null){
+            const newAthleteWithId : IAthlete = response.data;
+            setAthletes(
+                prev => [newAthleteWithId, ...prev]
+            );
+        }
+        return response;
+    }
+
+     // Legg til fighter med bilde
+  
+    // DELETE
 
     return(
         // Sjekk IAthleteContex
         // Husk å wrap Provider i AppRouting til pages som skal ha tilgang
-        <AthleteContext.Provider value={{athletes, fetchAthleteQuantity, fetchAthleteById, idAthlete, fetchAthleteByName, nameAthletes}}>
+        <AthleteContext.Provider value={{athletes, fetchAthleteQuantity, fetchAthleteById, idAthlete, fetchAthleteByName, nameAthletes, saveAthlete}}>
             {children}
         </AthleteContext.Provider>
     );
