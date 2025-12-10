@@ -1,19 +1,16 @@
 import { useContext, useRef, useState, type ChangeEvent } from "react";
-import type { IAthlete } from "../../interfaces/IAthlete";
-import { AthleteContext } from "../../contexts/AthleteContext";
-import type { IAthleteContext } from "../../interfaces/IAthleteContext";
+import type { IVenue } from "../../interfaces/IVenue";
+import { VenueContext } from "../../contexts/VenueContext";
+import type { IVenueContext } from "../../interfaces/IVenueContext";
 
-const NewAthlete = () => {
+const VenueNew = () => {
 
     const nameInput = useRef<HTMLInputElement | null>(null);
-    const genderInput = useRef<HTMLInputElement | null>(null);
-    const priceInput = useRef<HTMLInputElement | null>(null);
+    const capacityInput = useRef<HTMLInputElement | null>(null);
     const imageInput = useRef<HTMLInputElement | null>(null);
     const [image, setImage] = useState<File | null>(null);
-    // purchaseStatus skal være false som default
-    // const purchaseStatus = useRef<HTMLInputElement>(false);
 
-    const { saveAthlete } = useContext(AthleteContext) as IAthleteContext;
+    const { saveVenue } = useContext(VenueContext) as IVenueContext;
 
     const changeHandler = (e: ChangeEvent<HTMLInputElement>) => {
         const { files } = e.target;
@@ -21,36 +18,35 @@ const NewAthlete = () => {
             setImage(files[0]);
             console.log(files[0]);
         }
-    }
+    };
 
-    const handleSaveAthlete = async () => {
+    const handleSaveVenue = async () => {
         if (
-            nameInput.current && nameInput.current?.value.trim() != "" &&
-            genderInput.current && genderInput.current?.value.trim() != "" &&
-            priceInput.current && priceInput.current?.value.trim() != "" &&
+            nameInput.current && nameInput.current.value.trim() !== "" &&
+            capacityInput.current && capacityInput.current.value.trim() !== "" &&
             image != null
         ) {
-            const newAthlete: IAthlete = {
+            const newVenue: IVenue = {
                 name: nameInput.current.value,
-                gender: genderInput.current.value,
-                price: Number(priceInput.current.value),
-                image: image.name,
-                purchaseStatus: false
-            }
-            await saveAthlete(newAthlete, image);
+                capacity: Number(capacityInput.current.value),
+                image: image.name
+            };
+
+            await saveVenue(newVenue, image);
+
+            // Reset form
             nameInput.current.value = "";
-            genderInput.current.value = "";
-            priceInput.current.value = "";
+            capacityInput.current.value = "";
             setImage(null);
             if (imageInput.current) {
                 imageInput.current.value = "";
             }
         }
-    }
+    };
 
     return (
         <section className="bg-white rounded-lg shadow p-6 max-w-md space-y-5 col-span-12 md:col-span-6">
-            <h2 className="text-xl font-semibold text-gray-800">New Athlete</h2>
+            <h2 className="text-xl font-semibold text-gray-800">New Venue</h2>
 
             <div className="flex flex-col gap-1">
                 <label className="text-sm text-gray-600">Name</label>
@@ -62,18 +58,9 @@ const NewAthlete = () => {
             </div>
 
             <div className="flex flex-col gap-1">
-                <label className="text-sm text-gray-600">Gender</label>
+                <label className="text-sm text-gray-600">Capacity</label>
                 <input
-                    ref={genderInput}
-                    type="text"
-                    className="px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                />
-            </div>
-
-            <div className="flex flex-col gap-1">
-                <label className="text-sm text-gray-600">Price</label>
-                <input
-                    ref={priceInput}
+                    ref={capacityInput}
                     type="number"
                     className="px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
@@ -91,12 +78,12 @@ const NewAthlete = () => {
 
             <button
                 className="w-full py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition font-medium"
-                onClick={handleSaveAthlete}
+                onClick={handleSaveVenue}
             >
-                Save new athlete
+                Save new venue
             </button>
         </section>
     );
-}
+};
 
-export default NewAthlete;
+export default VenueNew;

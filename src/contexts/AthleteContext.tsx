@@ -14,7 +14,6 @@ export const AthleteProvider = ({ children }: Props) => {
     const [idAthlete, setIdAthlete] = useState<IAthlete | null>(null);
     const [nameAthletes, setNameAthletes] = useState<IAthlete[]>([]);
 
-
     const setAthletesFromService = async () => {
         const response = await AthleteService.getAllAthletes();
         if (response.success && response.data) {
@@ -65,8 +64,9 @@ export const AthleteProvider = ({ children }: Props) => {
     const putAthlete = async (editedAthlete: IAthlete, image: File): Promise<IDefaultResponse> => {
         const response = await AthleteService.putAthlete(editedAthlete, image);
         if (response.success && response.data) {
+            const updatedAthlete: IAthlete = response.data;
             setAthletes(
-                prev => [...prev, editedAthlete]
+                prev => [...prev, updatedAthlete]
             );
         }
         return response;
