@@ -1,13 +1,21 @@
+import { useContext } from "react";
 import { type IAthlete } from "../../interfaces/IAthlete";
 import AthleteService from "../../services/AthleteService";
+import type { IAthleteContext } from "../../interfaces/IAthleteContext";
+import { AthleteContext } from "../../contexts/AthleteContext";
 
 const AthleteItem = ({ athlete }: { athlete: IAthlete }) => {
+const { deleteAthelete } = useContext(AthleteContext) as IAthleteContext;
 
-    const handleDelete = async () => {
-        console.log("Deleting athlete with id:", athlete.id);
-        const idInput = Number(athlete.id);
-        await AthleteService.deleteAthlete(idInput);
+const handleDelete = async () => {
+    if (athlete.id != null) {
+
+     
+        await deleteAthelete(athlete.id);
     }
+}
+
+
 
     return (
         <article className="bg-white rounded-lg shadow p-4 max-w-sm col-span-3 md:col-span-6">

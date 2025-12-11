@@ -19,7 +19,6 @@ const NewAthlete = () => {
         const { files } = e.target;
         if (files != null) {
             setImage(files[0]);
-            console.log(files[0]);
         }
     }
 
@@ -34,7 +33,7 @@ const NewAthlete = () => {
                 name: nameInput.current.value,
                 gender: genderInput.current.value,
                 price: Number(priceInput.current.value),
-                image: image.name,
+                image: image.name || "",
                 purchaseStatus: false
             }
             await saveAthlete(newAthlete, image);

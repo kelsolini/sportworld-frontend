@@ -13,6 +13,7 @@ export const AthleteProvider = ({ children }: Props) => {
     const [athletes, setAthletes] = useState<IAthlete[]>([]);
     const [idAthlete, setIdAthlete] = useState<IAthlete | null>(null);
     const [nameAthletes, setNameAthletes] = useState<IAthlete[]>([]);
+    const [error, setError] = useState<Error | string>("");
 
     const setAthletesFromService = async () => {
         const response = await AthleteService.getAllAthletes();
@@ -50,6 +51,19 @@ export const AthleteProvider = ({ children }: Props) => {
         }
     }
 
+    //update purchased athletes - set boolean true for purchase
+   const updatePurchasedAthlete = async (id: number, newStatus: boolean): Promise<IDefaultResponse> => {
+    const response = await AthleteService.purchaseAthlete(id, newStatus);
+     if (response.success && response.data) {
+        const purchasedAthlete: IAthlete = response.data;
+        setAthletes(
+            prev => [...prev, purchasedAthlete]
+        );
+    }
+
+    return response;
+   }
+
     // Søk athlete på name 
     const fetchAthleteByName = async (name: string) => {
         const response = await AthleteService.getAthleteByName(name);
@@ -61,16 +75,37 @@ export const AthleteProvider = ({ children }: Props) => {
     }
 
     // TODO: Put/edit athlete
-    const putAthlete = async (editedAthlete: IAthlete, image: File): Promise<IDefaultResponse> => {
+const putAthlete = async (editedAthlete: IAthlete, image: File | null): Promise<IDefaultResponse> => {
+    try {
+        // Always PUT the athlete object first
         const response = await AthleteService.putAthlete(editedAthlete, image);
+
         if (response.success && response.data) {
-            const updatedAthlete: IAthlete = response.data;
-            setAthletes(
-                prev => [...prev, updatedAthlete]
+            // Update local athlete list
+            setAthletes(prev =>
+                prev.map(a =>
+                    a.id === editedAthlete.id ? response.data : a
+                )
             );
         }
+
         return response;
+
+    } catch (error) {
+        return { success: false,};
     }
+};
+
+
+    //delete athelete
+    const deleteAthelete = async (id: number) : Promise<IDefaultResponse> => {
+        const response = await AthleteService.deleteAthlete(id);
+        if (response.success) {
+            //oppdatere listen om sletting var vellykket
+            setAthletes(prev => prev.filter (a => a.id !== id));
+        }
+        return response;
+    };
 
     // POST
     const saveAthlete = async (newAthlete: IAthlete, image: File): Promise<IDefaultResponse> => {
@@ -95,7 +130,10 @@ export const AthleteProvider = ({ children }: Props) => {
             fetchAthleteByName,
             nameAthletes,
             saveAthlete,
-            putAthlete
+            putAthlete,
+            deleteAthelete,
+            updatePurchasedAthlete
+           
         }}>
             {children}
         </AthleteContext.Provider>

@@ -9,5 +9,7 @@ export interface IAthleteContext {
     fetchAthleteByName: (name: string) => void,
     nameAthletes: IAthlete[],
     saveAthlete: (athlete: IAthlete, image: File) => Promise<IDefaultResponse>,
-    putAthlete: (updatedAthlete: IAthlete, image: File) => Promise<IDefaultResponse>,
+    putAthlete: (updatedAthlete: IAthlete, image: File ) => Promise<IDefaultResponse>,
+    deleteAthelete: (id: number ) => Promise<IDefaultResponse>,
+    updatePurchasedAthlete: (id: number, newStatus: boolean ) => Promise<IDefaultResponse>
 }

@@ -53,8 +53,8 @@ const getAthleteByName = async (name: string): Promise<IAthleteResponse> => {
     }
 }
 
-// PUT FABIAN HAR EGEN
-const putAthlete = async (editedAthlete: IAthlete, newImage: File) => {
+// PUT ATHLETE (med bilde)
+const putAthlete = async (editedAthlete: IAthlete, newImage: File  | null ) => {
     try {
         const response = await axios.put(endpoint, editedAthlete);
 
@@ -68,6 +68,7 @@ const putAthlete = async (editedAthlete: IAthlete, newImage: File) => {
         } else {
             console.log("No new image provided, skipping image upload.");
         }
+       
 
         return {
             success: true,
@@ -110,13 +111,42 @@ const postAthlete = async (athlete: IAthlete, image: File) => {
 const deleteAthlete = async (id: number) => {
     try {
         await axios.delete(`${endpoint}/${id}`);
+
+            console.log( "DELETE successful for athlete with id:", id );
+          
         return {
-            success: true
+            success: true 
         }
+      
+        
     } catch (error) {
         console.error("DELETE error:");
         return {
             success: false
+        }
+    }  
+}
+
+// purchase athelete set boolean true for purchase
+const purchaseAthlete = async (id: number, newStatus: boolean ) => {
+    try {
+        const response = await axios.post(`${endpoint}`, {
+            id: id,
+            purchaseStatus: true
+        });
+        newStatus = true;
+
+        return {
+            success: true,
+            data: response.data
+        };
+
+
+    } catch (error) {
+        console.error("PURCHASE error:", error);
+        return {
+            success: false,
+            data: null
         }
     }
 }
@@ -127,5 +157,6 @@ export default {
     getAthleteByName,
     putAthlete,
     postAthlete,
-    deleteAthlete
+    deleteAthlete,
+    purchaseAthlete
 }
