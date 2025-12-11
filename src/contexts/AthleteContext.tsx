@@ -51,18 +51,7 @@ export const AthleteProvider = ({ children }: Props) => {
         }
     }
 
-    //update purchased athletes - set boolean true for purchase
-   const updatePurchasedAthlete = async (id: number, newStatus: boolean): Promise<IDefaultResponse> => {
-    const response = await AthleteService.purchaseAthlete(id, newStatus);
-     if (response.success && response.data) {
-        const purchasedAthlete: IAthlete = response.data;
-        setAthletes(
-            prev => [...prev, purchasedAthlete]
-        );
-    }
-
-    return response;
-   }
+ 
 
     // Søk athlete på name 
     const fetchAthleteByName = async (name: string) => {
@@ -95,6 +84,24 @@ const putAthlete = async (editedAthlete: IAthlete, image: File | null): Promise<
         return { success: false,};
     }
 };
+
+const putPurchasedTrue = async (purchasedAthlete: IAthlete): Promise<IDefaultResponse> => {
+    try {
+        const response = await AthleteService.putAthlete(purchasedAthlete, null);
+
+        if (response.success && response.data) {
+            // Update local athlete list
+            setAthletes(prev =>
+                prev.map(a =>
+                    a.id === purchasedAthlete.id ? response.data : a
+                )
+            );
+        }
+        return response;
+    } catch (error) {
+        return { success: false };  
+    }
+}
 
 
     //delete athelete
@@ -132,7 +139,8 @@ const putAthlete = async (editedAthlete: IAthlete, image: File | null): Promise<
             saveAthlete,
             putAthlete,
             deleteAthelete,
-            updatePurchasedAthlete
+            
+            putPurchasedTrue
            
         }}>
             {children}

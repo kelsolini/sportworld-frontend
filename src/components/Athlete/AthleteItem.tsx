@@ -5,7 +5,7 @@ import type { IAthleteContext } from "../../interfaces/IAthleteContext";
 import { AthleteContext } from "../../contexts/AthleteContext";
 
 const AthleteItem = ({ athlete }: { athlete: IAthlete }) => {
-const { deleteAthelete } = useContext(AthleteContext) as IAthleteContext;
+const { deleteAthelete, putPurchasedTrue } = useContext(AthleteContext) as IAthleteContext;
 
 const handleDelete = async () => {
     if (athlete.id != null) {
@@ -15,6 +15,16 @@ const handleDelete = async () => {
     }
 }
 
+
+const handlePurchase = async () => {
+    if (athlete.id != null) {
+        const purchasedAthlete: IAthlete = {
+            ...athlete,
+            purchaseStatus: true
+        };
+        await putPurchasedTrue( purchasedAthlete);
+    }
+}
 
 
     return (
@@ -35,6 +45,10 @@ const handleDelete = async () => {
             <div className="mt-3 text-sm text-gray-600">
                 Purchased: {athlete.purchaseStatus ? "Yes" : "No"}
             </div>
+
+            <button onClick={handlePurchase}>
+                Purchase Athlete
+            </button>
 
             <button
                 className="mt-4 w-full py-2 text-sm font-medium text-white bg-red-500 rounded-md hover:bg-red-600 transition"

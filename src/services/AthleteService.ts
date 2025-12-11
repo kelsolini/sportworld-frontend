@@ -128,19 +128,16 @@ const deleteAthlete = async (id: number) => {
 }
 
 // purchase athelete set boolean true for purchase
-const purchaseAthlete = async (id: number, newStatus: boolean ) => {
+const purchaseAthlete = async (athelete: IAthlete ): Promise<IAthleteSingelResponse> => {
     try {
-        const response = await axios.post(`${endpoint}`, {
-            id: id,
-            purchaseStatus: true
-        });
-        newStatus = true;
+       const updatedAthlete: IAthlete = {...athelete, purchaseStatus: true };
 
+       //sende full resp til db
+       const response = await axios.put(endpoint, updatedAthlete)
         return {
             success: true,
-            data: response.data
-        };
-
+            data: response?.data
+        }
 
     } catch (error) {
         console.error("PURCHASE error:", error);
